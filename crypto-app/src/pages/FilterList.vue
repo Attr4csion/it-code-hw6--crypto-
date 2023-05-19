@@ -54,6 +54,9 @@ function goToPage(page: number) {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
 }
+const handleChange =(val:number)=>{
+  currentPage.value = val
+}
 </script>
 
 <template>
@@ -70,13 +73,12 @@ function goToPage(page: number) {
     </div>
 </div>
     <div class="pagination" v-if="totalPages !== 0">
-      <button v-if="currentPage!==1" @click="goToPage(currentPage - 1)" > ᐸ </button>
-      <button v-if="currentPage!== 1" @click="goToPage(1)">1</button>
-      <button v-if="currentPage > 2" @click="goToPage(currentPage - 1)">{{ currentPage - 1 }}</button>
-      <button style="background-color: antiquewhite;">{{ currentPage }}</button>
-      <button v-if="currentPage < totalPages - 1" @click="goToPage(currentPage + 1)">{{ currentPage + 1 }}</button>        
-      <button @click="goToPage(totalPages)">{{ totalPages }}</button>
-      <button v-if="currentPage!==totalPages" @click="goToPage(currentPage + 1)">ᐳ</button>
+      <el-pagination background layout="prev, pager, next"
+                    :current-page="currentPage"
+                    @prev-click="goToPage(currentPage-1)" 
+                    @next-click="goToPage(currentPage+1)" 
+                    @current-change="handleChange" 
+                    :total="totalPages*10"></el-pagination>
     </div>
 </template>
 

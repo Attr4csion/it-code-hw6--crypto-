@@ -61,8 +61,9 @@ const inputCoin = () =>{
     }
     search.value = '';
 }
-//https://api.coingecko.com/api/v3/search?category=algorand-ecosystem
-// https://api.coingecko.com/api/v3/search?category=decentralized-exchange
+const handleChange =(val:number)=>{
+  currentPage.value = val
+}
 </script>
 
 <template>
@@ -70,22 +71,21 @@ const inputCoin = () =>{
     <el-input class="input" type="text" v-model="search" placeholder="Поиск по имени"></el-input>
     <el-button @click="inputCoin">Найти</el-button>
     <el-button @click="noCoin">Сбросить</el-button>
+
   </div>
   <div class="wrapper">
     <div v-for="money in paginatedItems" :key="money.id">
       <coin-card :coin="money"></coin-card>
     </div>
     <div class="pagination" v-if="totalPages !== 0">
-      <button v-if="currentPage!==1" @click="goToPage(currentPage - 1)" > ᐸ </button>
-      <button v-if="currentPage!== 1" @click="goToPage(1)">1</button>
-      <button v-if="currentPage > 2" @click="goToPage(currentPage - 1)">{{ currentPage - 1 }}</button>
-      <button style="background-color: antiquewhite;">{{ currentPage }}</button>
-      <button v-if="currentPage < totalPages - 1" @click="goToPage(currentPage + 1)">{{ currentPage + 1 }}</button>        
-      <button @click="goToPage(totalPages)">{{ totalPages }}</button>
-      <button v-if="currentPage!==totalPages" @click="goToPage(currentPage + 1)">ᐳ</button>
-    </div>
-  </div>
-    
+      <el-pagination background layout="prev, pager, next"
+                    :current-page="currentPage"
+                    @prev-click="goToPage(currentPage-1)" 
+                    @next-click="goToPage(currentPage+1)" 
+                    @current-change="handleChange" 
+                    :total="totalPages*10"></el-pagination>
+                  </div>
+                </div>
 </template>
 
 <style scoped lang="scss">
