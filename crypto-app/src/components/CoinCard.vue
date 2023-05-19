@@ -2,10 +2,8 @@
 
 interface Props{
     coin:{
-        id:string,
-        name:string,
-        image:string,
-        current_price:number
+        id: string;
+  name: string;
     }
 }
 const {coin} = defineProps<Props>()
@@ -17,20 +15,15 @@ const {coin} = defineProps<Props>()
 
 <template>
     <div class="card">
-        <img :src="coin.image">
         <p>Название: {{ coin.name }}</p>
-        <p>Текущая цена: {{ coin.current_price }}$</p>
-        <el-button type="primary">Купить</el-button> 
-        <router-link :to="'/card/'+coin.id">
-            <el-button type="info">info</el-button>
-        </router-link>   
+        <el-button @click="$router.push('/card/'+coin.id)">Подробнее</el-button>
     </div>
 </template>
 
 <style scoped lang="scss">
  .card{
     width: 270px;
-    height: 350px;
+    height: 80px;
     background: #575757;
     border-radius: 20px;
     padding: 10px;

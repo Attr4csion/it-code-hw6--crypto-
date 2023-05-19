@@ -6,75 +6,69 @@ import {ref,computed} from 'vue'
 interface Coin {
   id: string;
   name: string;
-  api_symbol: string;
-  symbol: string;
-  market_cap_rank: number;
-  thumb: string;
-  large: string;
+}
+interface ICAtegories{
+    category_id:string,
+    name:string
 }
 
 const moneys = ref<Coin[]>([]);
-const search =ref()
+const categories = ref<ICAtegories[]>([]);
+const cat = ref()
 const itemsPerPage = 12;
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(moneys.value.length / itemsPerPage))
+makeRequest({  
+            method: "get",                             
+            url: `https://api.coingecko.com/api/v3/search`,  
+        }).then(({data}) => {                                 
+            moneys.value = data.coins
+        })
 
+const CoinCategorie = () =>{
+  makeRequest({  
+            method: "get",                             
+            url: `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=${cat.value}`,  
+        }).then(({data}) => {                                 
+            moneys.value = data                  
+        })
+        if (cat.value === ''){
+            makeRequest({  
+            method: "get",                             
+            url: `https://api.coingecko.com/api/v3/search`,  
+        }).then(({data}) => {                                 
+            moneys.value = data.coins
+        })
+        }
+}
 makeRequest({  
   method: "get",                             
-  url: `https://api.coingecko.com/api/v3/search`,  
+  url: `https://api.coingecko.com/api/v3/coins/categories/list`,  
 }).then(({data}) => {                                 
-  moneys.value = data.coins                       
+  categories.value = data                       
 })
-
 const paginatedItems = computed(() =>
   moneys.value.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage)
 )
-
 function goToPage(page: number) {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
 }
-const noCoin = () =>{
-  makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins                      
-        })
-}
-const inputCoin = () =>{    
-    if (search.value !== ''){  
-        makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search?query=${search.value}`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins
-        })
-    }
-    else{
-        makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins                      
-        })
-    }
-    search.value = '';
-}
-//https://api.coingecko.com/api/v3/search?category=algorand-ecosystem
-// https://api.coingecko.com/api/v3/search?category=decentralized-exchange
 </script>
 
 <template>
-  <div class="search">
-    <el-input class="input" type="text" v-model="search" placeholder="Поиск по имени"></el-input>
-    <el-button @click="inputCoin">Найти</el-button>
-    <el-button @click="noCoin">Сбросить</el-button>
-  </div>
-  <div class="wrapper">
+<div class="search">
+    <el-select clearable placeholder="Категории" v-model="cat" @change="CoinCategorie">
+      <el-option v-for="categorie in categories"
+                 :key="categorie.category_id" 
+                 :value="categorie.category_id">{{ categorie.name }}</el-option>
+    </el-select>
+</div>
+<div class="wrapper">
     <div v-for="money in paginatedItems" :key="money.id">
       <coin-card :coin="money"></coin-card>
     </div>
+</div>
     <div class="pagination" v-if="totalPages !== 0">
       <button v-if="currentPage!==1" @click="goToPage(currentPage - 1)" > ᐸ </button>
       <button v-if="currentPage!== 1" @click="goToPage(1)">1</button>
@@ -84,11 +78,9 @@ const inputCoin = () =>{
       <button @click="goToPage(totalPages)">{{ totalPages }}</button>
       <button v-if="currentPage!==totalPages" @click="goToPage(currentPage + 1)">ᐳ</button>
     </div>
-  </div>
-    
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 
 .wrapper{
     width: 75vw;
@@ -98,9 +90,9 @@ const inputCoin = () =>{
     flex-wrap: wrap;
     gap: 30px;
     justify-content: space-between;
-    padding-top: 20px;
+    padding-top: 20px;  
 }
-.pagination{
+     .pagination{
         display: flex;
         width: 10vw;
         align-items: center;
@@ -109,14 +101,7 @@ const inputCoin = () =>{
             padding: 10px;
             border:1px solid;
         }
-    } 
+    }   
+    
 
-.search{
-  display: flex;
-  padding: 20px;
-  .input{
-    width: 300px;
-    margin-right: 20px;
-  }
-}
 </style>

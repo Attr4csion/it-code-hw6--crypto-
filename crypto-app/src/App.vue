@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import NavBar from './components/NavBar.vue'
+
 </script>
 
 <template>
-    <NavBar></NavBar>
-    <router-view></router-view>
+    <NavBar ></NavBar>
+    <router-view ></router-view>
 </template>
 
 <style>
@@ -17,6 +18,4 @@ body{
     background-color: rgb(40, 40, 40);
 
 }
-
-
 </style>
