@@ -1,33 +1,18 @@
 <script setup lang="ts">
 import CoinCard from '../components/CoinCard.vue'
-import makeRequest from '../utilities/makeRequest'
 import {ref,computed} from 'vue'
+import { useCoinStore } from '../store/coins-store';
 
-interface Coin {
-  id: string;
-  name: string;
-  api_symbol: string;
-  symbol: string;
-  market_cap_rank: number;
-  thumb: string;
-  large: string;
-}
-
-const moneys = ref<Coin[]>([]);
 const search =ref()
 const itemsPerPage = 12;
 const currentPage = ref(1)
-const totalPages = computed(() => Math.ceil(moneys.value.length / itemsPerPage))
+const totalPages = computed(() => Math.ceil(coinStore.coins.length / itemsPerPage))
 
-makeRequest({  
-  method: "get",                             
-  url: `https://api.coingecko.com/api/v3/search`,  
-}).then(({data}) => {                                 
-  moneys.value = data.coins                       
-})
+const coinStore = useCoinStore()
+coinStore.fetchCoins()
 
 const paginatedItems = computed(() =>
-  moneys.value.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage)
+ coinStore.coins.slice((currentPage.value - 1) * itemsPerPage, currentPage.value * itemsPerPage)
 )
 
 function goToPage(page: number) {
@@ -35,29 +20,16 @@ function goToPage(page: number) {
   currentPage.value = page
 }
 const noCoin = () =>{
-  makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins                      
-        })
+  coinStore.fetchCoins()
+
 }
 const inputCoin = () =>{    
     if (search.value !== ''){  
-        makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search?query=${search.value}`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins
-        })
+        coinStore.inputCoins(search.value)
     }
     else{
-        makeRequest({  
-            method: "get",                             
-            url: `https://api.coingecko.com/api/v3/search`,  
-        }).then(({data}) => {                                 
-            moneys.value = data.coins                      
-        })
+        coinStore.fetchCoins()
+
     }
     search.value = '';
 }
