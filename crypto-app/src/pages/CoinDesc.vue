@@ -1,46 +1,26 @@
 <script setup lang="ts">
-import {ref} from 'vue'
+// import {ref} from 'vue'
 import { useRoute } from 'vue-router'
-import makeRequest from '../utilities/makeRequest';
+// import makeRequest from '../utilities/makeRequest';
+import { useCoinStore } from '../store/coins-store';
+
 
 const route = useRoute()
 const id = (route.params.idcard)
-
-interface IMoneys {
-    id: string,
-    name: string,
-    image:{
-        large:string
-    }
-    market_data:{
-        current_price:{
-            usd:number
-        }
-    }
-} 
-
-const moneys = ref<IMoneys[]>([])
-
-makeRequest({  
-  method: "get",                              
-  url: `https://api.coingecko.com/api/v3/coins/${id}`,  
-}).then(({data}) => {                                 
-  moneys.value = data                                  
-})
-
-
+const coinDetail = useCoinStore()
+coinDetail.fetchCoinsDetail(id)
 </script>
 
 <template>
 <div class="desc">
     <div class="card">
-        <img :src="moneys.image.large">
+        <img :src="coinDetail.coin.image.large">
         <div class="card-text">
-            <p>Название: {{ moneys.name }}</p>
-            <p>Текущая цена: {{ moneys.market_data.current_price.usd }}$</p>
+            <p>Название: {{ coinDetail.coin.name }}</p>
+            <p>Текущая цена: {{ coinDetail.coin.market_data.current_price.usd }}$</p>
         </div>
     </div>    
-    <div v-html="(moneys.description.en)"></div>
+    <div v-html="(coinDetail.coin.description.en)"></div>
 </div>
 
 </template>

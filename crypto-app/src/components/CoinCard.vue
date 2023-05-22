@@ -3,7 +3,7 @@
 interface Props{
     coin:{
         id: string;
-  name: string;
+        name: string;
     }
 }
 const {coin} = defineProps<Props>()
