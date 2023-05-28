@@ -16,7 +16,7 @@ const {coin} = defineProps<Props>()
 <template>
     <div class="card">
         <p>{{ coin.name }}
-        <el-button class="button" round  @click="$router.push('/card/'+coin.id)">Подробнее</el-button></p>
+        <el-button class="button" round  @click="$router.push('/card/'+coin.id)">info</el-button></p>
     </div>
 </template>
 
