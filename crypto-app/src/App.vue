@@ -4,18 +4,24 @@ import NavBar from './components/NavBar.vue'
 </script>
 
 <template>
-    <NavBar ></NavBar>
-    <router-view ></router-view>
+    <div>
+        <NavBar ></NavBar>
+        <router-view ></router-view>
+    </div>
 </template>
 
-<style>
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<style scoped>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 body{
-    background-color: rgb(40, 40, 40);
+    background-color:#198CE6;
 
+}
+div{
+    display: flex; 
+    width: 100vw;
 }
 </style>
